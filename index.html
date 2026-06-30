@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div id="app"></div>
+  
+  <script>
+    const categories = ['All', 'Nature', 'Architecture', 'People', 'Travel', 'Food'];
+    
+    const images = [
+      { id: 3, src: 'https://images.pexels.com/photos/1680172/pexels-photo-1680172.jpeg?w=800', alt: 'Person in coffee shop', category: 'People' },
+      { id: 4, src: 'https://images.pexels.com/photos/2409011/pexels-photo-2409011.jpeg?w=800', alt: 'Tropical beach', category: 'Travel'  },
+      { id: 5, src: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?w=800', alt: 'Salad bowl', category: 'Food'  },
+      { id: 8, src: 'https://images.pexels.com/photos/1021693/pexels-photo-1021693.jpeg?w=800', alt: 'Woman portrait', category: 'People' },
+      { id: 9, src: 'https://images.pexels.com/photos/2246476/pexels-photo-2246476.jpeg?w=800', alt: 'Mountain lake', category: 'Travel' },
+      { id: 10, src: 'https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg?w=800', alt: 'Pasta dish', category: 'Food' },
+      { id: 11, src:  'https://media.istockphoto.com/id/1403500817/photo/the-craggies-in-the-blue-ridge-mountains.jpg?s=612x612&w=0&k=20&c=N-pGA8OClRVDzRfj_9AqANnOaDS3devZWwrQNwZuDSk=', alt: 'sky',category:'Nature'},
+      { id: 12, src:  'https://i.ebayimg.com/images/g/O2YAAOSwS7llffxt/s-l400.jpg',alt: 'moon',category:'Architecture'},
+      { id: 13, src:  'https://landmarksarchitects.com/wp-content/uploads/2024/06/Parametricism-building-6252024.jpg',alt: 'structure',category:'Architecture'},
+      { id: 14, src:  'https://www.thoughtco.com/thmb/L_M5H5lc0pyeVDSsYr-Yo-fDfNM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/taj-mahal-566383005-581de0103df78cc2e8df5201.jpg',alt: 'TajMahal',category:'Architecture'},
+      { id: 15, src:  'https://static.vecteezy.com/system/resources/thumbnails/049/855/347/small/nature-background-high-resolution-wallpaper-for-a-serene-and-stunning-view-photo.jpg',alt: 'lotus',category:'Nature'},
+      { id: 16, src:  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQczuy1z48HSFbBxZDrlKNo9rKaw5zqGKc0N7P8NcaLMWtyLEaqcfL45oIs&s=10',alt: 'simple',category:'Nature'},
+      { id: 17, src:  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBVdVHUBlix6kNBk5t9I2kylD6OM8Y8obHeySv9mSA03hxUsCpf6fYF38W&s=10',alt: 'tree',category:'Nature'},
+      { id: 18, src:  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2FV_faF2NzZzU3CS5avd4vTQFyQOw7KZefUb7BjH_I1HCWzJQkzvaGxg&s=10',alt: 'anna',category:'People'},
+      { id: 19, src:  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfweLfRROiri5hr47gnA5mRJf8x4SKJqRaf-glBrTznYCVEuIg2vJ5dmE&s=10',alt: 'Shadow',category:'People'},
+      { id: 20, src:  'https://images.unsplash.com/photo-1631447818577-c2beceb2bee2?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',alt: 'Shadow',category:'People'},];
+
+    
+    const filters = [
+      { name: 'None', class: '' },
+      { name: 'Grayscale', class: 'grayscale' },
+      { name: 'Sepia', class: 'sepia' },
+    ];
+
+    let activeCategory = 'All';
+    let lightboxImage = null;
+    let currentFilter = filters[0];
+
+    function render() {
+      const filteredImages = activeCategory === 'All' 
+        ? images 
+        : images.filter(img => img.category === activeCategory);
+
+      document.getElementById('app').innerHTML = `
+        <div class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+          <header class="relative overflow-hidden py-16 text-center">
+            <h1 class="text-5xl md:text-7xl font-bold bg-gradient-to-r from-emerald-400 via-cyan-400 to-teal-400 bg-clip-text text-transparent">
+              Gallery
+            </h1>
+            <p class="text-slate-400 text-lg mt-4">Explore stunning photography from around the world</p>
+          </header>
+
+          <div class="max-w-7xl mx-auto px-6 pb-8 flex flex-wrap justify-center gap-2">
+            ${categories.map(cat => `
+              <button onclick="setCategory('${cat}')" class="px-5 py-2.5 rounded-full text-sm font-medium transition-all ${activeCategory === cat 
+                ? 'bg-gradient-to-r from-emerald-600 to-cyan-600 text-white' 
+                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">
+                ${cat}
+              </button>
+            `).join('')}
+          </div>
+
+          <main class="max-w-7xl mx-auto px-6 pb-16">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              ${filteredImages.map(img => `
+                <div onclick="openLightbox(${img.id})" class="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer bg-slate-800 shadow-xl">
+                  <img src="${img.src}" alt="${img.alt}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${currentFilter.class}">
+                  <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="absolute bottom-0 left-0 right-0 p-5">
+                      <h3 class="text-white font-semibold text-lg">${img.alt}</h3>
+                      <p class="text-slate-400 text-sm">by ${img.photographer}</p>
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </main>
+
+          ${lightboxImage ? `
+            <div onclick="closeLightbox()" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95">
+              <button onclick="closeLightbox()" class="absolute top-6 right-6 w-12 h-12 rounded-full bg-slate-800 text-white flex items-center justify-center">X</button>
+              <button onclick="prevImage()" class="absolute left-6 w-14 h-14 rounded-full bg-slate-800 text-white flex items-center justify-center text-2xl">&lt;</button>
+              <button onclick="nextImage()" class="absolute right-6 w-14 h-14 rounded-full bg-slate-800 text-white flex items-center justify-center text-2xl">&gt;</button>
+              <img src="${lightboxImage.src.replace('w=800', 'w=1600')}" alt="${lightboxImage.alt}" class="max-h-[85vh] rounded-2xl" onclick="event.stopPropagation()">
+              <div class="absolute bottom-8 text-white text-center">
+                <h2 class="text-xl font-semibold">${lightboxImage.alt}</h2>
+                <p class="text-slate-400">by ${lightboxImage.photographer}</p>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    function setCategory(cat) {
+      activeCategory = cat;
+      render();
+    }
+
+    function openLightbox(id) {
+      lightboxImage = images.find(img => img.id === id);
+      render();
+    }
+
+    function closeLightbox() {
+      lightboxImage = null;
+      render();
+    }
+
+    function prevImage() {
+      const filtered = activeCategory === 'All' ? images : images.filter(img => img.category === activeCategory);
+      const idx = filtered.findIndex(img => img.id === lightboxImage.id);
+      lightboxImage = filtered[(idx - 1 + filtered.length) % filtered.length];
+      render();
+    }
+
+    function nextImage() {
+      const filtered = activeCategory === 'All' ? images : images.filter(img => img.category === activeCategory);
+      const idx = filtered.findIndex(img => img.id === lightboxImage.id);
+      lightboxImage = filtered[(idx + 1) % filtered.length];
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>
